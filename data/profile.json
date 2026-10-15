@@ -1,0 +1,21 @@
+{
+  "name": "Cristian Uroz",
+  "headline": "Staff Engineer",
+  "summary": "I'm an engineer interested in building reliable systems, solving complex problems, and helping teams deliver better software.",
+  "experience": [
+    {
+      "company": "Company One",
+      "role": "Senior Software Engineer",
+      "period": "2020 - 2024",
+      "description": "Replace this example with a real achievement from your career.",
+      "technologies": ["Go", "Linux", "AWS"]
+    },
+    {
+      "company": "Company Two",
+      "role": "Software Engineer",
+      "period": "2016 - 2020",
+      "description": "Replace this example with a real project or responsibility.",
+      "technologies": ["Networking", "Docker"]
+    }
+  ]
+}

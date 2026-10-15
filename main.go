@@ -1,9 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/cjuroz/retro-cv/internal/cv"
 )
@@ -16,6 +21,25 @@ type PageData struct {
 type App struct {
 	pages   map[string]*template.Template
 	profile cv.Profile
+}
+
+func loadProfile(path string) (cv.Profile, error) {
+	var profile cv.Profile
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return profile, err
+	}
+
+	if err := json.Unmarshal(data, &profile); err != nil {
+		return profile, err
+	}
+
+	if profile.Name == "" {
+		return profile, fmt.Errorf("profile name is required")
+	}
+
+	return profile, nil
 }
 
 func newApp() (*App, error) {
@@ -33,26 +57,9 @@ func newApp() (*App, error) {
 		pages[name] = tmpl
 	}
 
-	profile := cv.Profile{
-		Name:     "Cristian Uroz",
-		Headline: "Staff Engineer",
-		Summary:  "I'm an engineer interested in building reliable systems, solving complex problems, and helping teams deliver better software.",
-		Experience: []cv.Experience{
-			{
-				Company:      "Company One",
-				Role:         "Senior Software Engineer",
-				Period:       "2020 - 2024",
-				Description:  "Replace this example with a real achievement from your career.",
-				Technologies: []string{"Go", "Linux", "AWS"},
-			},
-			{
-				Company:      "Company Two",
-				Role:         "Software Engineer",
-				Period:       "2016 - 2020",
-				Description:  "Replace this example with a real project or responsibility.",
-				Technologies: []string{"Networking", "Docker"},
-			},
-		},
+	profile, err := loadProfile("data/profile.json")
+	if err != nil {
+		return nil, err
 	}
 
 	return &App{
@@ -66,16 +73,30 @@ func (a *App) renderPage(
 	name string,
 	title string,
 ) {
+	tmpl, ok := a.pages[name]
+	if !ok {
+		http.NotFound(w, nil)
+		return
+	}
+
 	data := PageData{
 		Title:   title,
 		Profile: a.profile,
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	err := a.pages[name].ExecuteTemplate(w, "layout.html", data)
-	if err != nil {
+	// Render completely before sending the response.
+	var buf bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&buf, "layout.html", data); err != nil {
 		log.Printf("render %s page: %v", name, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
+	if _, err := buf.WriteTo(w); err != nil {
+		log.Printf("write %s response: %v", name, err)
 	}
 }
 
@@ -102,20 +123,57 @@ func (a *App) routes() *http.ServeMux {
 	return mux
 }
 
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		w.Header().Set(
+			"Content-Security-Policy",
+			"default-src 'self'; style-src 'self'; img-src 'self' data:; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+		)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func requestLogger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		next.ServeHTTP(w, r)
+
+		log.Printf(
+			"method=%s path=%s duration=%s",
+			r.Method,
+			r.URL.Path,
+			time.Since(start),
+		)
+	})
+}
+
 func main() {
 	app, err := newApp()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	server := &http.Server{
-		Addr:    "localhost:8080",
-		Handler: app.routes(),
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	log.Println("Server running on http://localhost:8080")
+	handler := securityHeaders(requestLogger(app.routes()))
 
-	if err := server.ListenAndServe(); err != nil {
+	server := &http.Server{
+		Addr:              ":" + port,
+		Handler:           handler,
+		ReadHeaderTimeout: 5 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	log.Printf("Server running on http://localhost:%s", port)
+
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
 }

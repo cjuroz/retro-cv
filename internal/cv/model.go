@@ -1,16 +1,16 @@
 package cv
 
 type Experience struct {
-	Company      string
-	Role         string
-	Period       string
-	Description  string
-	Technologies []string
+	Company      string   `json:"company"`
+	Role         string   `json:"role"`
+	Period       string   `json:"period"`
+	Description  string   `json:"description"`
+	Technologies []string `json:"technologies"`
 }
 
 type Profile struct {
-	Name       string
-	Headline   string
-	Summary    string
-	Experience []Experience
+	Name       string       `json:"name"`
+	Headline   string       `json:"headline"`
+	Summary    string       `json:"summary"`
+	Experience []Experience `json:"experience"`
 }

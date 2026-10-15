@@ -1,0 +1,46 @@
+{{ define "content" }}
+<section class="hero">
+    <p class="eyebrow">PERSONAL ENGINEERING PORTFOLIO // 001</p>
+
+    <h1>
+        CRISTIAN<br>
+        <span>UROZ<span class="cursor">_</span></span>
+    </h1>
+
+    <p class="role">STAFF ENGINEER <span>//</span> SYSTEMS & SOFTWARE</p>
+
+    <p class="intro">
+        I build, operate and improve systems.
+        Exploring the intersection of software, infrastructure
+        and engineering leadership.
+    </p>
+
+    <div class="actions">
+        <a class="button primary" href="/about">EXPLORE PROFILE <span>→</span></a>
+        <a class="button secondary" href="#terminal">OPEN TERMINAL</a>
+    </div>
+</section>
+
+<section class="terminal" id="terminal">
+    <div class="terminal-header">
+        <div class="terminal-lights" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
+        <span>cristian@staff-engineer:~</span>
+        <span class="terminal-label">TTY 01</span>
+    </div>
+
+    <div class="terminal-body">
+        <p><span class="prompt">$</span> whoami</p>
+        <p class="output">Software engineer. Problem solver. Systems thinker.</p>
+
+        <p><span class="prompt">$</span> cat current_focus.txt</p>
+        <p class="output">Go · Docker · Kubernetes · AWS</p>
+
+        <p><span class="prompt">$</span> echo $MISSION</p>
+        <p class="output">Build reliable systems and help engineers do their best work.</p>
+
+        <p class="terminal-ready"><span class="prompt">$</span> <span class="cursor">_</span></p>
+    </div>
+</section>
+{{ end }}

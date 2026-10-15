@@ -1,0 +1,22 @@
+{{ define "content" }}
+<section class="page-section">
+    <p class="eyebrow">SYSTEM PROFILE // 002</p>
+    <h1>ABOUT<span class="cursor">_</span></h1>
+
+    <div class="panel">
+        <h2>WHO I AM</h2>
+        <p>{{ .Profile.Summary }}</p>
+    </div>
+
+    <div class="panel">
+        <h2>ENGINEERING PHILOSOPHY</h2>
+        <p>
+            Good engineering is more than writing code.
+            It means understanding trade-offs, building reliable
+            systems, and helping teams make better decisions.
+        </p>
+    </div>
+
+    <a class="button secondary" href="/">← BACK HOME</a>
+</section>
+{{ end }}

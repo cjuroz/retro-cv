@@ -1,0 +1,23 @@
+{{ define "content" }}
+<section class="page-section">
+    <p class="eyebrow">PROFESSIONAL HISTORY // 003</p>
+    <h1>EXPERIENCE<span class="cursor">_</span></h1>
+
+    {{ range .Profile.Experience }}
+    <article class="experience-card">
+        <div class="experience-period">{{ .Period }}</div>
+        <h2>{{ .Role }}</h2>
+        <p class="company">@ {{ .Company }}</p>
+        <p>{{ .Description }}</p>
+
+        <div class="tags">
+            {{ range .Technologies }}
+            <span class="tag">{{ . }}</span>
+            {{ end }}
+        </div>
+    </article>
+    {{ else }}
+    <p>Experience details will be added soon.</p>
+    {{ end }}
+</section>
+{{ end }}

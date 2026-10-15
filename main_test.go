@@ -27,6 +27,8 @@ func TestRoutes(t *testing.T) {
 		{"/about", http.StatusOK, "WHO I AM"},
 		{"/experience", http.StatusOK, "PROFESSIONAL HISTORY"},
 		{"/missing", http.StatusNotFound, "404 page not found"},
+		{"/health", http.StatusOK, "ok"},
+		{"/ready", http.StatusOK, "ready"},
 	}
 
 	for _, tt := range tests {

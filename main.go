@@ -2,12 +2,16 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/cjuroz/retro-cv/internal/cv"
@@ -103,6 +107,16 @@ func (a *App) renderPage(
 func (a *App) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ok\n"))
+	})
+
+	mux.HandleFunc("GET /ready", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("ready\n"))
+	})
+
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		a.renderPage(w, "home", "Home")
 	})
@@ -171,9 +185,41 @@ func main() {
 		IdleTimeout:       60 * time.Second,
 	}
 
-	log.Printf("Server running on http://localhost:%s", port)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
-	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatal(err)
+	serverErrors := make(chan error, 1)
+
+	go func() {
+		log.Printf("server listening on :%s", port)
+		serverErrors <- server.ListenAndServe()
+	}()
+
+	select {
+	case err := <-serverErrors:
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("starting server: %v", err)
+		}
+
+	case <-ctx.Done():
+		log.Println("shutdown signal received")
 	}
+
+	// Allow active requests up to 10 seconds to finish.
+	shutdownCtx, cancel := context.WithTimeout(
+		context.Background(),
+		10*time.Second,
+	)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Printf("graceful shutdown failed: %v", err)
+
+		if closeErr := server.Close(); closeErr != nil {
+			log.Printf("forcing server close: %v", closeErr)
+		}
+	}
+
+	log.Println("server stopped")
+
 }

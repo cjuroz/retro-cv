@@ -18,8 +18,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 FROM alpine:3.22
 
 RUN apk add --no-cache ca-certificates curl \
-    && addgroup -S app \
-    && adduser -S -G app app
+    && addgroup -S -g 1001 app \
+    && adduser -S -u 1001 -G app app
 
 WORKDIR /app
 
@@ -30,7 +30,7 @@ COPY --from=builder --chown=app:app /src/data ./data
 
 ENV PORT=8080
 
-USER app
+USER 1001:1001
 
 EXPOSE 8080
 

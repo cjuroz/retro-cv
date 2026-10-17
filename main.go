@@ -14,21 +14,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cjuroz/retro-cv/internal/cv"
+	"github.com/cjuroz/retro-cv/internal/profile"
 )
 
 type PageData struct {
 	Title   string
-	Profile cv.Profile
+	Profile profile.Profile
 }
 
 type App struct {
 	pages   map[string]*template.Template
-	profile cv.Profile
+	profile profile.Profile
 }
 
-func loadProfile(path string) (cv.Profile, error) {
-	var profile cv.Profile
+func loadProfile(path string) (profile.Profile, error) {
+	var profile profile.Profile
 
 	data, err := os.ReadFile(path)
 	if err != nil {

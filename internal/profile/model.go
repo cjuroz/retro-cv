@@ -1,4 +1,4 @@
-package cv
+package profile
 
 type Experience struct {
 	Company      string   `json:"company"`

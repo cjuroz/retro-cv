@@ -60,16 +60,35 @@ func TestRoutes(t *testing.T) {
 }
 
 func TestLoadProfile(t *testing.T) {
-	profile, err := loadProfile("data/profile.json")
+	got, err := loadProfile("data/profile.json")
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("loadProfile() error = %v", err)
 	}
 
-	if profile.Name == "" {
+	if strings.TrimSpace(got.Name) == "" {
 		t.Fatal("profile name should not be empty")
 	}
 
-	if len(profile.Experience) == 0 {
-		t.Fatal("expected at least one example experience")
+	if strings.TrimSpace(got.Headline) == "" {
+		t.Error("profile headline should not be empty")
+	}
+
+	if len(got.Experience) == 0 {
+		t.Fatal("expected at least one experience entry")
+	}
+
+	for i, exp := range got.Experience {
+		if strings.TrimSpace(exp.Company) == "" {
+			t.Errorf("experience[%d]: company should not be empty", i)
+		}
+		if strings.TrimSpace(exp.Role) == "" {
+			t.Errorf("experience[%d]: role should not be empty", i)
+		}
+		if strings.TrimSpace(exp.Period) == "" {
+			t.Errorf("experience[%d]: period should not be empty", i)
+		}
+		if strings.TrimSpace(exp.Description) == "" {
+			t.Errorf("experience[%d]: description should not be empty", i)
+		}
 	}
 }

@@ -8,22 +8,39 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+    <div id="boot-screen" class="boot-screen">
+        <div class="boot-terminal">
+            <div class="boot-title">CU SYSTEM BIOS v{{ .Version }}</div>
+            <div class="boot-divider"></div>
+
+            <div id="boot-log" class="boot-log"></div>
+
+            <div class="boot-progress">
+                <div id="boot-progress-bar"></div>
+            </div>
+
+            <div id="boot-complete" class="boot-complete">
+                BOOT SUCCESSFUL<span class="boot-cursor">_</span>
+            </div>
+        </div>
+    </div>
+
     <div class="scanlines" aria-hidden="true"></div>
 
-<header class="topbar">
-    <a class="logo" href="/">CU<span>_</span></a>
+    <header class="topbar">
+        <a class="logo" href="/">CU<span>_</span></a>
 
-    <nav class="navigation" aria-label="Main navigation">
-        <a href="/">HOME</a>
-        <a href="/about">ABOUT</a>
-        <a href="/experience">EXPERIENCE</a>
-    </nav>
+        <nav class="navigation" aria-label="Main navigation">
+            <a href="/">HOME</a>
+            <a href="/about">ABOUT</a>
+            <a href="/experience">EXPERIENCE</a>
+        </nav>
 
-    <div class="system-status" role="status" aria-label="System ready">
-        <span class="status-dot" aria-hidden="true"></span>
-        SYSTEM READY
-    </div>
-</header>
+        <div id="system-status" class="system-status is-loading">
+            <span class="status-dot"></span>
+            <span class="status-text">SYSTEM LOADING...</span>
+        </div>
+    </header>
 
     <main>
         {{ template "content" . }}
@@ -31,7 +48,14 @@
 
     <footer>
         <span>CRISTIAN UROZ</span>
-        <span class="build-info">BUILT WITH GO · v{{ .Version }} · COMMIT {{ printf "%.7s" .Commit }} · © 2026</span>
+        <div class="footer-links">
+            <a href="https://github.com/cjuroz/retro-cv" target="_blank" rel="noopener noreferrer">[ VIEW SOURCE ]</a>
+            <a href="https://github.com/cjuroz/retro-cv/commit/{{ .Commit }}" target="_blank" rel="noopener noreferrer">COMMIT {{ printf "%.7s" .Commit }} ↗</a>
+            <span class="build-info">BUILT WITH GO · v{{ .Version }} · © 2026</span>
+        </div>
     </footer>
+    
+   <script src="/static/js/system-status.js" defer></script>
+   <script src="/static/js/boot-screen.js" defer></script>  
 </body>
 </html>

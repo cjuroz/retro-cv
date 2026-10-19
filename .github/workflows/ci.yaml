@@ -60,7 +60,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
-            type=sha,prefix=sha-
+            type=sha,format=long,prefix=sha-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -85,10 +85,47 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          fingerprint: ${{ secrets.EC2_HOST_FINGERPRINT }}
           envs: IMAGE_TAG
           script: |
             cd ~/retro-cv
-            IMAGE_TAG="$IMAGE_TAG" docker compose pull
-            IMAGE_TAG="$IMAGE_TAG" docker compose up -d
+
+            previous_image=$(docker inspect --format '{{.Config.Image}}' retro-cv 2>/dev/null || true)
+            previous_tag="${previous_image##*:}"
+
+            echo "Deploying image tag: $IMAGE_TAG"
+
+            if ! IMAGE_TAG="$IMAGE_TAG" docker compose pull; then
+              echo "Image pull failed; existing deployment left unchanged."
+              exit 1
+            fi
+
+            if ! IMAGE_TAG="$IMAGE_TAG" docker compose up -d; then
+              echo "Deployment failed; attempting rollback."
+              if [ -n "$previous_tag" ]; then
+                IMAGE_TAG="$previous_tag" docker compose pull &&
+                IMAGE_TAG="$previous_tag" docker compose up -d
+              fi
+              exit 1
+            fi
+
+            healthy=0
+            for i in $(seq 1 15); do
+              if curl -fsS http://127.0.0.1:8080/health >/dev/null 2>&1; then
+                healthy=1
+                break
+              fi
+              sleep 2
+            done
+
+            if [ "$healthy" -ne 1 ]; then
+              echo "Health check failed; attempting rollback."
+              if [ -n "$previous_tag" ] && [ "$previous_tag" != "$IMAGE_TAG" ]; then
+                IMAGE_TAG="$previous_tag" docker compose pull &&
+                IMAGE_TAG="$previous_tag" docker compose up -d
+              fi
+              exit 1
+            fi
+
+            echo "Deployment healthy."
             docker compose ps
-            curl --fail --silent --show-error http://127.0.0.1:8080/health

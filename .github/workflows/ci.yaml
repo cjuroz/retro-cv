@@ -70,3 +70,25 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
+  deploy:
+    name: Deploy to EC2
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: IMAGE_TAG
+          script: |
+            cd ~/retro-cv
+            IMAGE_TAG="$IMAGE_TAG" docker compose pull
+            IMAGE_TAG="$IMAGE_TAG" docker compose up -d
+            docker compose ps
+            curl --fail --silent --show-error http://127.0.0.1:8080/health

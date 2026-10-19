@@ -19,9 +19,9 @@
         <a href="/experience">EXPERIENCE</a>
     </nav>
 
-    <div class="system-status">
-        <span class="status-dot"></span>
-        SYSTEM ONLINE
+    <div class="system-status" role="status" aria-label="System ready">
+        <span class="status-dot" aria-hidden="true"></span>
+        SYSTEM READY
     </div>
 </header>
 
@@ -31,7 +31,7 @@
 
     <footer>
         <span>CRISTIAN UROZ</span>
-        <span>BUILT WITH GO · © 2026</span>
+        <span class="build-info">BUILT WITH GO · v{{ .Version }} · COMMIT {{ printf "%.7s" .Commit }} · © 2026</span>
     </footer>
 </body>
 </html>

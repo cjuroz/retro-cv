@@ -46,6 +46,10 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v4
 
+      - name: Read application version
+        id: version
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -66,6 +70,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
+            type=raw,value=${{ steps.version.outputs.version }}
             type=sha,format=long,prefix=sha-
 
       - name: Build and push Docker image
@@ -75,6 +80,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            APP_VERSION=${{ steps.version.outputs.version }}
+            APP_COMMIT=${{ github.sha }}
 
   deploy:
     name: Deploy to EC2

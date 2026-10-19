@@ -17,9 +17,16 @@ import (
 	"github.com/cjuroz/retro-cv/internal/profile"
 )
 
+var (
+	version = "dev"
+	commit  = "unknown"
+)
+
 type PageData struct {
 	Title   string
 	Profile profile.Profile
+	Version string
+	Commit  string
 }
 
 type App struct {
@@ -86,6 +93,8 @@ func (a *App) renderPage(
 	data := PageData{
 		Title:   title,
 		Profile: a.profile,
+		Version: version,
+		Commit:  commit,
 	}
 
 	// Render completely before sending the response.
@@ -221,5 +230,4 @@ func main() {
 	}
 
 	log.Println("server stopped")
-
 }

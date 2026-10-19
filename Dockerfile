@@ -8,9 +8,12 @@ RUN go mod download
 
 COPY . .
 
+ARG APP_VERSION=dev
+ARG APP_COMMIT=unknown
+
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -trimpath \
-    -ldflags="-s -w" \
+    -ldflags="-s -w -X main.version=${APP_VERSION} -X main.commit=${APP_COMMIT}" \
     -o /out/retro-cv \
     .
 

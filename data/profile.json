@@ -1,21 +1,74 @@
 {
   "name": "Cristian Uroz",
-  "headline": "Staff Engineer",
-  "summary": "I'm an engineer interested in building reliable systems, solving complex problems, and helping teams deliver better software.",
+  "headline": "Lead Cloud & Software Engineer",
+  "summary": "Results-driven engineer with 12+ years of experience across enterprise security SaaS, distributed backend architecture, and cloud infrastructure operations. Experienced in leading SRE/DevOps teams, designing highly available multi-region AWS architectures, and building robust API-driven backends in Java, C#, Python, and Go. Entrepreneurial leader focused on connecting technical excellence with business outcomes.",
   "experience": [
     {
-      "company": "Company One",
-      "role": "Senior Software Engineer",
-      "period": "2020 - 2024",
-      "description": "Replace this example with a real achievement from your career.",
-      "technologies": ["Go", "Linux", "AWS"]
+      "company": "HolaTaipei Co., Ltd.",
+      "role": "CEO & Founder / Principal Cloud Architect",
+      "period": "06/2021 – Present",
+      "description": "Founded and scaled an international business operating across Europe, LATAM, and Asia. Architected and maintain AWS web infrastructure using EC2, CloudFront, S3, Lambda, and Route 53, targeting 99.9% uptime. Led B2B technology integrations, hosting provisioning, DNS routing, service automation, and international partner operations.",
+      "technologies": [
+        "AWS",
+        "EC2",
+        "CloudFront",
+        "S3",
+        "Lambda",
+        "Route 53",
+        "Cloud Architecture",
+        "Automation",
+        "B2B Integrations"
+      ]
     },
     {
-      "company": "Company Two",
-      "role": "Software Engineer",
-      "period": "2016 - 2020",
-      "description": "Replace this example with a real project or responsibility.",
-      "technologies": ["Networking", "Docker"]
+      "company": "Trend Micro (趨勢科技)",
+      "role": "Lead DevOps & Cloud Solutions Architect",
+      "period": "10/2015 – 12/2020",
+      "description": "Architected and operated secure, scalable, multi-region AWS infrastructure for Phish Insight, Trend Micro's security awareness SaaS platform. Built and led an SRE and cloud engineering team, owning incident response, monitoring, and automated failover strategy. Led cloud migration for 30+ SaaS microservices within a Continuous Delivery department of 60+ engineers and standardized enterprise CI/CD workflows.",
+      "technologies": [
+        "AWS",
+        "SRE",
+        "DevOps",
+        "Multi-region Architecture",
+        "Microservices",
+        "Jenkins",
+        "GitLab CI",
+        "CircleCI",
+        "Octopus Deploy",
+        "SonarQube"
+      ]
+    },
+    {
+      "company": "Toro Ltd.",
+      "role": "Lead Software Engineer / Backend Architect",
+      "period": "08/2012 – 07/2015",
+      "description": "Architected a GlobalPlatform-compliant payment and wallet backend, Wallet Manager, using Java, Spring, Apache Camel, MongoDB, and Oracle. Built secure REST APIs, IPC mechanisms, and credential lifecycle management for NFC and mobile payment integrations. Also designed C#/.NET backend services for a Windows Phone 8 J2ME-NFC wallet and managed technical roadmaps, Agile/Scrum planning, and enterprise customer support.",
+      "technologies": [
+        "Java",
+        "Spring",
+        "Apache Camel",
+        "MongoDB",
+        "Oracle",
+        "REST APIs",
+        "C#",
+        ".NET",
+        "NFC",
+        "Mobile Payments",
+        "Agile/Scrum"
+      ]
+    },
+    {
+      "company": "Altran / Byrom plc (FIFA)",
+      "role": "Senior Software Engineer (.NET)",
+      "period": "08/2008 – 07/2012",
+      "description": "Developed high-throughput Ticketing Administration Systems for the FIFA World Cup 2010 using C#/.NET, WCF, and SQL Server, supporting millions of high-concurrency database transactions.",
+      "technologies": [
+        "C#",
+        ".NET",
+        "WCF",
+        "SQL Server",
+        "High-throughput Systems"
+      ]
     }
   ]
 }

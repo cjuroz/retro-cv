@@ -6,9 +6,31 @@
     {{ range .Profile.Experience }}
     <article class="experience-card">
         <div class="experience-period">{{ .Period }}</div>
+
         <h2>{{ .Role }}</h2>
+
         <p class="company">@ {{ .Company }}</p>
-        <p>{{ .Description }}</p>
+
+        <p class="company-summary">{{ .Summary }}</p>
+
+        {{ if .Website }}
+        <p class="company-website">
+            <a href="{{ .Website }}" target="_blank" rel="noopener noreferrer">
+                {{ .Website }} ↗
+            </a>
+        </p>
+        {{ end }}
+
+        <p class="experience-location">
+            <span class="prompt">LOCATION //</span>
+            {{ .Location }}
+        </p>
+
+        <ul class="experience-description">
+            {{ range .Description }}
+            <li>{{ . }}</li>
+            {{ end }}
+        </ul>
 
         <div class="tags">
             {{ range .Technologies }}
@@ -19,5 +41,9 @@
     {{ else }}
     <p>Experience details will be added soon.</p>
     {{ end }}
+    
+    <div class="actions">
+        <a class="button secondary" href="/">← BACK HOME</a>
+    </div>
 </section>
 {{ end }}

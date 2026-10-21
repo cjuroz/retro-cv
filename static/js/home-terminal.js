@@ -9,14 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
     openButton.addEventListener("click", (event) => {
         event.preventDefault();
 
-        // Reveal the terminal.
-        terminal.hidden = false;
-        openButton.setAttribute("aria-expanded", "true");
+        terminal.classList.remove("terminal-collapsed");
+        terminal.classList.add("terminal-expanded");
 
-        // Update the URL without reloading the page.
+        openButton.setAttribute("aria-expanded", "true");
+        openButton.textContent = "TERMINAL OPEN ✓";
+
         history.replaceState(null, "", "#terminal");
 
-        // Scroll to the terminal after it becomes visible.
         terminal.scrollIntoView({
             behavior: window.matchMedia(
                 "(prefers-reduced-motion: reduce)"

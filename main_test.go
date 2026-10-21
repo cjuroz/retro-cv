@@ -24,7 +24,7 @@ func TestRoutes(t *testing.T) {
 		wantBody   string
 	}{
 		{"/", http.StatusOK, "CRISTIAN"},
-		{"/about", http.StatusOK, "WHO I AM"},
+		{"/about", http.StatusOK, "ABOUT"},
 		{"/experience", http.StatusOK, "PROFESSIONAL HISTORY"},
 		{"/missing", http.StatusNotFound, "404 page not found"},
 		{"/health", http.StatusOK, "ok"},
@@ -81,14 +81,26 @@ func TestLoadProfile(t *testing.T) {
 		if strings.TrimSpace(exp.Company) == "" {
 			t.Errorf("experience[%d]: company should not be empty", i)
 		}
+		if strings.TrimSpace(exp.Summary) == "" {
+			t.Errorf("experience[%d]: summary should not be empty", i)
+		}
+		if strings.TrimSpace(exp.Location) == "" {
+			t.Errorf("experience[%d]: location should not be empty", i)
+		}
 		if strings.TrimSpace(exp.Role) == "" {
 			t.Errorf("experience[%d]: role should not be empty", i)
 		}
 		if strings.TrimSpace(exp.Period) == "" {
 			t.Errorf("experience[%d]: period should not be empty", i)
 		}
-		if strings.TrimSpace(exp.Description) == "" {
-			t.Errorf("experience[%d]: description should not be empty", i)
+		if len(exp.Description) == 0 {
+			t.Errorf("experience[%d]: description should contain at least one bullet", i)
+		}
+
+		for j, item := range exp.Description {
+			if strings.TrimSpace(item) == "" {
+				t.Errorf("experience[%d]: description[%d] should not be empty", i, j)
+			}
 		}
 	}
 }

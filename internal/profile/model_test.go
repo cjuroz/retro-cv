@@ -2,51 +2,80 @@ package profile
 
 import (
 	"encoding/json"
-	"reflect"
+	"strings"
 	"testing"
 )
 
-func TestProfileJSONUnmarshal(t *testing.T) {
-	input := `{
-		"name": "Cristian Uroz",
-		"headline": "Go Engineer",
-		"summary": "Backend engineering and cloud infrastructure",
-		"experience": [
-			{
-				"company": "Example Corp",
-				"role": "Staff Engineer",
-				"period": "2024-2026",
-				"description": "Built backend services",
-				"technologies": ["Go", "Docker", "AWS"]
-			}
-		]
+func TestExperienceJSON(t *testing.T) {
+	data := `{
+		"company": "Trend Micro",
+		"summary": "A global cybersecurity company.",
+		"website": "https://www.trendmicro.com",
+		"location": "Taipei, Taiwan",
+		"role": "Lead DevOps & Cloud Solutions Architect",
+		"period": "2015 - 2020",
+		"description": [
+			"Led cloud infrastructure engineering.",
+			"Standardized CI/CD pipelines."
+		],
+		"technologies": ["AWS", "Docker", "Kubernetes"]
 	}`
 
-	var got Profile
-	if err := json.Unmarshal([]byte(input), &got); err != nil {
+	var got Experience
+	if err := json.Unmarshal([]byte(data), &got); err != nil {
 		t.Fatalf("json.Unmarshal() error = %v", err)
 	}
 
-	if got.Name != "Cristian Uroz" {
-		t.Errorf("Name = %q, want %q", got.Name, "Cristian Uroz")
+	if got.Company != "Trend Micro" {
+		t.Errorf("Company = %q, want %q", got.Company, "Trend Micro")
+	}
+	if got.Summary != "A global cybersecurity company." {
+		t.Errorf("Summary = %q, want %q", got.Summary, "A global cybersecurity company.")
+	}
+	if got.Website != "https://www.trendmicro.com" {
+		t.Errorf("Website = %q, want %q", got.Website, "https://www.trendmicro.com")
+	}
+	if got.Location != "Taipei, Taiwan" {
+		t.Errorf("Location = %q, want %q", got.Location, "Taipei, Taiwan")
+	}
+	if got.Role != "Lead DevOps & Cloud Solutions Architect" {
+		t.Errorf("Role = %q, want %q", got.Role, "Lead DevOps & Cloud Solutions Architect")
+	}
+	if got.Period != "2015 - 2020" {
+		t.Errorf("Period = %q, want %q", got.Period, "2015 - 2020")
 	}
 
-	if got.Headline != "Go Engineer" {
-		t.Errorf("Headline = %q, want %q", got.Headline, "Go Engineer")
+	if len(got.Description) != 2 {
+		t.Fatalf("len(Description) = %d, want 2", len(got.Description))
+	}
+	for i, description := range got.Description {
+		if strings.TrimSpace(description) == "" {
+			t.Errorf("Description[%d] should not be empty", i)
+		}
 	}
 
-	if len(got.Experience) != 1 {
-		t.Fatalf("len(Experience) = %d, want 1", len(got.Experience))
+	if len(got.Technologies) != 3 {
+		t.Errorf("len(Technologies) = %d, want 3", len(got.Technologies))
+	}
+}
+
+func TestExperienceWebsiteOptional(t *testing.T) {
+	data := `{
+		"company": "Example Company",
+		"summary": "An example company.",
+		"location": "Taipei, Taiwan",
+		"role": "Software Engineer",
+		"period": "2020 - 2024",
+		"description": ["Built backend services."],
+		"technologies": ["Go"]
+	}`
+
+	var got Experience
+	if err := json.Unmarshal([]byte(data), &got); err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
 	}
 
-	exp := got.Experience[0]
-	if exp.Company != "Example Corp" {
-		t.Errorf("Company = %q, want %q", exp.Company, "Example Corp")
-	}
-
-	wantTechnologies := []string{"Go", "Docker", "AWS"}
-	if !reflect.DeepEqual(exp.Technologies, wantTechnologies) {
-		t.Errorf("Technologies = %v, want %v",
-			exp.Technologies, wantTechnologies)
+	if got.Website != "" {
+		t.Errorf("Website = %q, want empty string when omitted", got.Website)
 	}
 }

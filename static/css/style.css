@@ -683,3 +683,37 @@ footer {
         animation: none;
     }
 }
+
+/* Collapsed terminal preview */
+.terminal-collapsed {
+    max-height: 220px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.7s ease;
+}
+
+/* Fade the bottom edge to hint at hidden content */
+.terminal-collapsed::after {
+    content: " ";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(
+        transparent,
+        var(--panel)
+    );
+    pointer-events: none;
+}
+
+.terminal-expanded {
+    max-height: 3000px;
+}
+
+/* Disable the expansion animation for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+    .terminal-collapsed {
+        transition: none;
+    }
+}

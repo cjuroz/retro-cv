@@ -1,22 +1,37 @@
 {{ define "content" }}
 <section class="page-section">
-    <p class="eyebrow">SYSTEM PROFILE // 002</p>
+   <p class="eyebrow">SYSTEM PROFILE // 002</p>
     <h1>ABOUT<span class="cursor">_</span></h1>
 
     <div class="panel">
-        <h2>WHO I AM</h2>
+        <h2>{{ .Profile.Headline }}</h2>
         <p>{{ .Profile.Summary }}</p>
     </div>
 
     <div class="panel">
-        <h2>ENGINEERING PHILOSOPHY</h2>
+        <h2>CORE EXPERTISE</h2>
+        <ul>
+            <li>Cloud architecture and highly available AWS infrastructure</li>
+            <li>Distributed backend systems and API design</li>
+            <li>SRE, DevOps, CI/CD, and production reliability</li>
+            <li>Technical leadership and cross-team collaboration</li>
+            <li>Entrepreneurial experience connecting technology with business outcomes</li>
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h2>TECHNICAL BACKGROUND</h2>
         <p>
-            Good engineering is more than writing code.
-            It means understanding trade-offs, building reliable
-            systems, and helping teams make better decisions.
+            My experience spans Java, C#, Python, and Go, with hands-on work
+            across AWS, microservices, databases, containerization, and
+            deployment automation.
         </p>
     </div>
 
-    <a class="button secondary" href="/">← BACK HOME</a>
+    <div class="actions">
+        <a class="button secondary" href="/">← BACK HOME</a>
+        <a class="button secondary" href="/experience">GO TO EXPERIENCE →</a>
+    </div>
+    
 </section>
 {{ end }}

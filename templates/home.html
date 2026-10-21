@@ -1,68 +1,68 @@
 {{ define "content" }}
 <section class="hero">
-    <p class="eyebrow">PERSONAL ENGINEERING PORTFOLIO // 001</p>
+    <p class="eyebrow">SYSTEM PROFILE // 001</p>
 
-    <h1>
-        CRISTIAN<br>
-        <span>UROZ<span class="cursor">_</span></span>
-    </h1>
+    <h1>{{ .Profile.Name }}<span class="cursor">_</span></h1>
+    <h2>{{ .Profile.Headline }}</h2>
 
-    <p class="role">STAFF ENGINEER <span>//</span> SYSTEMS & SOFTWARE</p>
-
-    <p class="intro">
-        I build, operate and improve systems.
-        Exploring the intersection of software, infrastructure
-        and engineering leadership.
-    </p>
+    <p class="hero-summary">{{ .Profile.Summary }}</p>
 
     <div class="actions">
-        <a class="button primary" href="/about">EXPLORE PROFILE <span>→</span></a>
+        <a class="button primary" href="/about">ABOUT ME <span>→</span></a>
         <a class="button secondary" id="open-terminal" href="#terminal" aria-controls="terminal" aria-expanded="false">
             OPEN TERMINAL
         </a>
     </div>
 </section>
 
-<section class="terminal" id="terminal" hidden>
+<section class="terminal terminal-collapsed" id="terminal">
     <div class="terminal-header">
         <div class="terminal-lights" aria-hidden="true">
             <span></span><span></span><span></span>
         </div>
-        <span>cristian@staff-engineer:~</span>
+        <span>cristian@localhost:~</span>
         <span class="terminal-label">TTY 01</span>
     </div>
 
  <div class="terminal-body">
     <p><span class="prompt">$</span> whoami</p>
     <p class="output">
-        Cristian Uroz // Lead Cloud &amp; Software Engineer
+        Cristian Uroz // Cloud &amp; Software Engineer
     </p>
     <p class="output">
-        12+ years building software, distributed systems &amp; cloud infrastructure.
+        12+ years building software, distributed systems &amp; cloud infrastructure
     </p>
 
     <p><span class="prompt">$</span> cat highlights.txt</p>
-    <p class="output">[01] AWS architecture targeting 99.9% uptime</p>
-    <p class="output">[02] Led SRE &amp; cloud engineering teams</p>
-    <p class="output">[03] Migrated 30+ SaaS microservices</p>
-    <p class="output">[04] Payment systems &amp; high-throughput platforms</p>
-
-    <p><span class="prompt">$</span> ls tech-stack/</p>
-    <p class="output">LANGUAGES  Go · Python · Java · C# · C/C++</p>
-    <p class="output">CLOUD      AWS · Docker · Kubernetes · Terraform</p>
-    <p class="output">BACKEND    REST APIs · OAuth2/OIDC · gRPC</p>
-    <p class="output">DELIVERY   CI/CD · Jenkins · GitLab CI · CircleCI</p>
-    <p class="output">DATA       PostgreSQL · Oracle · MongoDB · Redis</p>
+    <p class="output">[00] Founded and co-led an international B2C/B2B travel business</p>
+    <p class="output">[01] Led SRE and cloud engineering teams at Trend Micro</p>
+    <p class="output">[02] Architected multi-region AWS infrastructure for enterprise security SaaS</p>
+    <p class="output">[03] Led cloud migration and CI/CD adoption for 30+ SaaS microservices</p>
+    <p class="output">[04] Built backend systems for NFC wallets and mobile payments</p>
 
     <p><span class="prompt">$</span> cat career.log</p>
-    <p class="output">2021—NOW  HolaTaipei    // Founder &amp; Cloud Architect</p>
-    <p class="output">2015—2020 Trend Micro   // Lead DevOps &amp; Cloud Architect</p>
-    <p class="output">2012—2015 Toro Ltd.     // Backend Architect</p>
+    <p class="output">2021—NOW  HolaTaipei    // Founder</p>
+    <p class="output">2015—2020 Trend Micro   // Lead DevOps &amp; Cloud SolutionsArchitect</p>
+    <p class="output">2012—2015 Toro Ltd.     // Lead Software Engineer &amp; Backend Architect</p>
     <p class="output">2008—2012 Altran / FIFA // Senior Software Engineer</p>
 
-    <p><span class="prompt">$</span> cat availability.txt</p>
-    <p class="output">LOCATION   Taiwan</p>
-    <p class="output">WORK AUTH  APRC · No sponsorship required</p>
+    <p><span class="prompt">$</span> ls tech-stack/</p>
+    <div class="tags">
+        <span class="tag">Go</span>
+        <span class="tag">Java</span>
+        <span class="tag">C# / .NET</span>
+        <span class="tag">Python</span>
+        <span class="tag">AWS</span>
+        <span class="tag">Docker</span>
+        <span class="tag">Kubernetes</span>
+        <span class="tag">Microservices</span>
+        <span class="tag">REST APIs</span>
+        <span class="tag">CI/CD</span>
+        <span class="tag">SRE / DevOps</span>
+        <span class="tag">PostgreSQL</span>
+        <span class="tag">MongoDB</span>
+        <span class="tag">Redis</span>
+    </div>
 
     <p class="terminal-ready">
         <span class="prompt">$</span> <span class="cursor">_</span>

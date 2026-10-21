@@ -38,8 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const messages = [
-        "CU PERSONAL COMPUTER BIOS v0.1.0",
-        "COPYRIGHT (C) 2026 CU SYSTEMS",
+        "CJUROZ PERSONAL COMPUTER BIOS v0.1.0",
+        "COPYRIGHT (C) 2026 CJUROZ SYSTEMS",
         "",
         "POST: POWER-ON SELF TEST .... PASS",
         "CPU: GO RUNTIME ............. OK",

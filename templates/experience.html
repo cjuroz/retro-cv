@@ -3,7 +3,7 @@
     <p class="eyebrow">PROFESSIONAL HISTORY // 003</p>
     <h1>EXPERIENCE<span class="cursor">_</span></h1>
 
-    {{ range .Profile.Experience }}
+    {{ range .Profile.Experiences }}
     <article class="experience-card">
         <div class="experience-period">{{ .Period }}</div>
 
@@ -27,7 +27,7 @@
         </p>
 
         <ul class="experience-description">
-            {{ range .Description }}
+            {{ range .Tasks }}
             <li>{{ . }}</li>
             {{ end }}
         </ul>

@@ -6,7 +6,22 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/cjuroz/retro-cv/internal/profile"
 )
+
+func TestUniqueTechnologies(t *testing.T) {
+	experiences := []profile.Experience{
+		{Technologies: []string{"Go", "AWS"}},
+		{Technologies: []string{"AWS", "Docker"}},
+	}
+
+	got := uniqueTechnologies(experiences)
+	want := []string{"Go", "AWS", "Docker"}
+	if strings.Join(got, ",") != strings.Join(want, ",") {
+		t.Errorf("uniqueTechnologies() = %v, want %v", got, want)
+	}
+}
 
 func TestRoutes(t *testing.T) {
 	app, err := newApp()
@@ -29,6 +44,7 @@ func TestRoutes(t *testing.T) {
 		{"/missing", http.StatusNotFound, "404 page not found"},
 		{"/health", http.StatusOK, "ok"},
 		{"/ready", http.StatusOK, "ready"},
+		{"/my-resume", http.StatusOK, "WORK EXPERIENCE"},
 	}
 
 	for _, tt := range tests {
@@ -73,11 +89,11 @@ func TestLoadProfile(t *testing.T) {
 		t.Error("profile headline should not be empty")
 	}
 
-	if len(got.Experience) == 0 {
+	if len(got.Experiences) == 0 {
 		t.Fatal("expected at least one experience entry")
 	}
 
-	for i, exp := range got.Experience {
+	for i, exp := range got.Experiences {
 		if strings.TrimSpace(exp.Company) == "" {
 			t.Errorf("experience[%d]: company should not be empty", i)
 		}
@@ -93,11 +109,11 @@ func TestLoadProfile(t *testing.T) {
 		if strings.TrimSpace(exp.Period) == "" {
 			t.Errorf("experience[%d]: period should not be empty", i)
 		}
-		if len(exp.Description) == 0 {
+		if len(exp.Tasks) == 0 {
 			t.Errorf("experience[%d]: description should contain at least one bullet", i)
 		}
 
-		for j, item := range exp.Description {
+		for j, item := range exp.Tasks {
 			if strings.TrimSpace(item) == "" {
 				t.Errorf("experience[%d]: description[%d] should not be empty", i, j)
 			}

@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -32,6 +33,23 @@ type PageData struct {
 type App struct {
 	pages   map[string]*template.Template
 	profile profile.Profile
+}
+
+func uniqueTechnologies(experiences []profile.Experience) []string {
+	seen := make(map[string]struct{})
+	technologies := make([]string, 0)
+
+	for _, experience := range experiences {
+		for _, technology := range experience.Technologies {
+			if _, exists := seen[technology]; exists {
+				continue
+			}
+			seen[technology] = struct{}{}
+			technologies = append(technologies, technology)
+		}
+	}
+
+	return technologies
 }
 
 func loadProfile(path string) (profile.Profile, error) {
@@ -57,7 +75,9 @@ func newApp() (*App, error) {
 	pages := make(map[string]*template.Template)
 
 	for _, name := range []string{"home", "about", "experience"} {
-		tmpl, err := template.ParseFiles(
+		tmpl, err := template.New(name).Funcs(template.FuncMap{
+			"uniqueTechnologies": uniqueTechnologies,
+		}).ParseFiles(
 			"templates/layout.html",
 			"templates/"+name+".html",
 		)
@@ -142,6 +162,21 @@ func (a *App) routes() *http.ServeMux {
 		"/static/",
 		http.FileServer(http.Dir("static")),
 	))
+
+	mux.HandleFunc("GET /my-resume", func(w http.ResponseWriter, r *http.Request) {
+		resume := generateResumeMarkdown(a.profile)
+
+		w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
+		w.Header().Set(
+			"Content-Disposition",
+			`attachment; filename="`+strings.ToLower(strings.ReplaceAll(a.profile.Name, " ", "-"))+`-resume.md"`)
+		w.Header().Set("Cache-Control", "no-cache")
+
+		w.WriteHeader(http.StatusOK)
+		if _, err := w.Write([]byte(resume)); err != nil {
+			log.Printf("write resume response: %v", err)
+		}
+	})
 
 	return mux
 }

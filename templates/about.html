@@ -4,27 +4,37 @@
     <h1>ABOUT<span class="cursor">_</span></h1>
 
     <div class="panel">
-        <h2>{{ .Profile.Headline }}</h2>
+        <h2>PROFESSIONAL SUMMARY</h2>
+        <p><strong>{{ .Profile.Headline }}</strong></p>
         <p>{{ .Profile.Summary }}</p>
     </div>
 
     <div class="panel">
         <h2>CORE EXPERTISE</h2>
         <ul>
-            <li>Cloud architecture and highly available AWS infrastructure</li>
-            <li>Distributed backend systems and API design</li>
-            <li>SRE, DevOps, CI/CD, and production reliability</li>
-            <li>Technical leadership and cross-team collaboration</li>
-            <li>Entrepreneurial experience connecting technology with business outcomes</li>
+            {{ range .Profile.Expertises }}
+                <li>{{ . }}</li>
+            {{ end }}
         </ul>
     </div>
 
     <div class="panel">
-        <h2>TECHNICAL BACKGROUND</h2>
+        <h2>TECHNICAL SKILLS</h2>
+        <ul>
+            {{ range .Profile.Skills }}
+                <li>{{ . }}</li>
+            {{ end }}
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h2>EDUCATION & LANGUAGES</h2>
+        {{ range .Profile.Educations }}
+            <div>{{ .Degree }} {{ .Period }}</div>
+            <div>{{ .Institution }}</div>
+        {{ end }}
         <p>
-            My experience spans Java, C#, Python, and Go, with hands-on work
-            across AWS, microservices, databases, containerization, and
-            deployment automation.
+            {{ range $index, $language := .Profile.Languages }}{{ if $index }} | {{ end }}<strong>{{ $language.Language }}</strong>: {{ $language.Level }}{{ end }}
         </p>
     </div>
 

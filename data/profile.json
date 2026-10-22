@@ -1,8 +1,54 @@
 {
   "name": "CRISTIAN UROZ",
-  "headline": "Cloud & Software Engineer",
+  "name_zh": "吳克思",
+  "resume_url": "https://cristian.uroz.cat",
+  "address": "Xinzhuang Dist., New Taipei City, Taiwan",
+  "email": "cristian@uroz.cat",
+  "work_status": "Taiwan APRC Holder (Open Work Permit / No Sponsorship Required)",
+  "linkedin": "https://linkedin.com/in/cristianuroz",
+  "github": "https://github.com/cjuroz",
+  "headline": "CLOUD & SOFTWARE ENGINEERING LEADER | SRE | DEVOPS | BACKEND ARCHITECT",
   "summary": "Results-driven engineer with 12+ years of experience across enterprise security SaaS, distributed backend architecture, and cloud infrastructure operations. Experienced in leading SRE/DevOps teams, designing highly available multi-region AWS architectures, and building robust API-driven backends in Java, C#, Python, and Go. Entrepreneurial leader focused on connecting technical excellence with business outcomes.",
-  "experience": [
+  "skills": [
+    "Languages & Scripting: Java, C#, C/C++, Bash/Shell, Python, Go",
+    "Cloud & Infrastructure: AWS (Solutions Architect Certified), Docker, Microservices",
+    "API & Integrations: RESTful APIs, Auth/Authz (OAuth2/OIDC), gRPC, Webhooks, Camel",
+    "CI/CD & DevOps: Jenkins, GitLab CI, CircleCI, Octopus Deploy, SonarQube",
+    "Databases & Storage: PostgreSQL, Oracle, MongoDB, Redis, SQL Server"
+  ],
+  "expertises": [
+    "Entrepreneurial experience connecting technology with business outcomes",
+    "Cloud architecture and highly available AWS infrastructure",
+    "Distributed backend systems and API design",
+    "SRE, DevOps, CI/CD, and production reliability",
+    "Technical leadership and cross-team collaboration"
+  ],
+  "educations": [
+    {
+      "institution": "Polytechnic University of Catalonia – BarcelonaTech, Spain",
+      "degree": "M.Sc. in Computer Science",
+      "period": "1997 – 2008"
+    }
+  ],
+  "languages": [
+    {
+      "language": "SPANISH",
+      "level": "Native"
+    },
+    {
+      "language": "CATALAN",
+      "level": "Native"
+    },
+    {
+      "language": "ENGLISH",
+      "level": "Full professional proficiency"
+    },
+    {
+      "language": "CHINESE",
+      "level": "Intermediate proficiency"
+    }
+  ],
+  "experiences": [
     {
       "company": "HolaTaipei Co., Ltd. (台北歡迎有限公司)",
       "summary": "HolaTaipei is a travel agency project founded by Spaniards living in Taiwan and targeting, but not limited to, Spanish speaking customers wishing to come to Taiwan for travel and/or business.",
@@ -10,7 +56,7 @@
       "location": "Taipei, Taiwan",
       "role": "CEO & Co-Founder",
       "period": "06/2021 – Present",
-      "description": [
+      "tasks": [
         "Co-Founded and scaled a travel agency delivering B2C and B2B services for international customers traveling to Taiwan.",
         "B2B Tech Sales securing international corporate partnerships and managing clients accounts across Europe, LATAM and Asia.",
         "AWS Cloud Hosting web provisioning and DNS routing (EC2, Cloudfront, S3, Lambda, R53…) to maintain 99.9% uptime",
@@ -30,7 +76,7 @@
       "location": "Taipei, Taiwan",
       "role": "Lead DevOps & Cloud Solutions Architect",
       "period": "10/2015 – 12/2020",
-      "description": [
+      "tasks": [
         "Architected, deployed, and managed multi-region, scalable, and high-security AWS infrastructure for \"Phish Insight\"—Trend Micro’s core security awareness SaaS platform.",
         "Built, trained, and led an SRE and cloud engineering team based in the Philippines; served as primary technical lead for incident response, monitoring, and automated failover strategy.",
         "Lead cloud migration and CI/CD adoption for 30+ key SaaS microservices across a department of 60+ engineers.",
@@ -57,7 +103,7 @@
       "location":"Taipei, Taiwan",
       "role": "Lead Software Engineer / Backend Architect",
       "period": "08/2012 – 07/2015",
-      "description": [
+      "tasks": [
         "Architected GlobalPlatform-compliant backend payment and wallet service (similar to Google/Apple pay) using Java, Spring, Apache Camel, MongoDB, and Oracle.",
         "Engineered secure REST APIs, IPC mechanisms, and credential lifecycle management systems for NFC and mobile payment integrations.",
         "Designed and built a J2ME interpreter using C# and Java for a Windows Phone 8 NFC wallet architecture.",
@@ -82,7 +128,7 @@
       "location": "Barcelona, Spain",
       "role": "Senior Software Engineer",
       "period": "08/2008 – 07/2012",
-      "description": [
+      "tasks": [
         "Developed the core FIFA World Cup 2010 Ticketing Administration System (TAS) utilizing C#/.NET, WCF, and SQL Server to handle the full customer journey, from initial reservation and lottery drawings to payment verification and seating assignment."
       ],
       "technologies": [

@@ -14,7 +14,7 @@ func TestExperienceJSON(t *testing.T) {
 		"location": "Taipei, Taiwan",
 		"role": "Lead DevOps & Cloud Solutions Architect",
 		"period": "2015 - 2020",
-		"description": [
+		"tasks": [
 			"Led cloud infrastructure engineering.",
 			"Standardized CI/CD pipelines."
 		],
@@ -45,10 +45,10 @@ func TestExperienceJSON(t *testing.T) {
 		t.Errorf("Period = %q, want %q", got.Period, "2015 - 2020")
 	}
 
-	if len(got.Description) != 2 {
-		t.Fatalf("len(Description) = %d, want 2", len(got.Description))
+	if len(got.Tasks) != 2 {
+		t.Fatalf("len(Description) = %d, want 2", len(got.Tasks))
 	}
-	for i, description := range got.Description {
+	for i, description := range got.Tasks {
 		if strings.TrimSpace(description) == "" {
 			t.Errorf("Description[%d] should not be empty", i)
 		}

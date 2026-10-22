@@ -3,15 +3,15 @@
     <p class="eyebrow">SYSTEM PROFILE // 001</p>
 
     <h1>{{ .Profile.Name }}<span class="cursor">_</span></h1>
+    <h1>{{ .Profile.NameZh }}<span class="cursor">_</span></h1>
     <h2>{{ .Profile.Headline }}</h2>
 
     <p class="hero-summary">{{ .Profile.Summary }}</p>
 
     <div class="actions">
-        <a class="button primary" href="/about">ABOUT ME <span>→</span></a>
-        <a class="button secondary" id="open-terminal" href="#terminal" aria-controls="terminal" aria-expanded="false">
-            OPEN TERMINAL
-        </a>
+        <a class="button primary" href="/about">ABOUT ME <span aria-hidden="true">→</span></a>
+        <a class="button secondary" id="open-terminal" href="#terminal" aria-controls="terminal" aria-expanded="false">OPEN TERMINAL</a>   
+        <a class="button secondary" href="/my-resume">DOWNLOAD RESUME <span aria-hidden="true">↓</span></a>
     </div>
 </section>
 
@@ -27,7 +27,7 @@
  <div class="terminal-body">
     <p><span class="prompt">$</span> whoami</p>
     <p class="output">
-        Cristian Uroz // Cloud &amp; Software Engineer
+        {{ .Profile.Name }} // {{ .Profile.Headline }}
     </p>
     <p class="output">
         12+ years building software, distributed systems &amp; cloud infrastructure
@@ -41,27 +41,15 @@
     <p class="output">[04] Built backend systems for NFC wallets and mobile payments</p>
 
     <p><span class="prompt">$</span> cat career.log</p>
-    <p class="output">2021—NOW  HolaTaipei    // Founder</p>
-    <p class="output">2015—2020 Trend Micro   // Lead DevOps &amp; Cloud SolutionsArchitect</p>
-    <p class="output">2012—2015 Toro Ltd.     // Lead Software Engineer &amp; Backend Architect</p>
-    <p class="output">2008—2012 Altran / FIFA // Senior Software Engineer</p>
+    {{ range .Profile.Experiences }}
+    <p class="output">{{ .Period }} {{ .Company }} // {{ .Role }}</p>
+    {{ end }}
 
     <p><span class="prompt">$</span> ls tech-stack/</p>
     <div class="tags">
-        <span class="tag">Go</span>
-        <span class="tag">Java</span>
-        <span class="tag">C# / .NET</span>
-        <span class="tag">Python</span>
-        <span class="tag">AWS</span>
-        <span class="tag">Docker</span>
-        <span class="tag">Kubernetes</span>
-        <span class="tag">Microservices</span>
-        <span class="tag">REST APIs</span>
-        <span class="tag">CI/CD</span>
-        <span class="tag">SRE / DevOps</span>
-        <span class="tag">PostgreSQL</span>
-        <span class="tag">MongoDB</span>
-        <span class="tag">Redis</span>
+        {{ range uniqueTechnologies .Profile.Experiences }}
+        <span class="tag">{{ . }}</span>
+        {{ end }}
     </div>
 
     <p class="terminal-ready">

@@ -103,6 +103,8 @@ jobs:
           envs: IMAGE_TAG
           script: |
             cd ~/retro-cv
+            git fetch origin
+            git reset --hard origin/master
 
             previous_image=$(docker inspect --format '{{.Config.Image}}' retro-cv 2>/dev/null || true)
             previous_tag="${previous_image##*:}"

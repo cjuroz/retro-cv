@@ -1,5 +1,5 @@
 services:
-  web:
+  retro-cv:
     build:
       context: .
     image: retro-cv:local
@@ -8,6 +8,8 @@ services:
       - "127.0.0.1:8080:8080"
     environment:
       PORT: "8080"
+    volumes:
+      - ./data:/app/data
     restart: unless-stopped
     init: true
     stop_grace_period: 15s

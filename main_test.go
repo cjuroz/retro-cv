@@ -26,7 +26,7 @@ func TestUniqueTechnologies(t *testing.T) {
 func TestRoutes(t *testing.T) {
 	app, err := newApp()
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("newApp() error = %v", err)
 	}
 
 	handler := securityHeaders(app.routes())

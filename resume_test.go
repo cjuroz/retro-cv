@@ -26,7 +26,9 @@ func TestResumeDownload(t *testing.T) {
 			resp.StatusCode, http.StatusOK)
 	}
 
-	if got := resp.Header.Get("Content-Disposition"); got != `attachment; filename="`+strings.ToLower(strings.ReplaceAll(app.profile.Name, " ", "-"))+`-resume.md"` {
+	profile := app.profileStore.Snapshot()
+
+	if got := resp.Header.Get("Content-Disposition"); got != `attachment; filename="`+strings.ToLower(strings.ReplaceAll(profile.Name, " ", "-"))+`-resume.md"` {
 		t.Errorf("Content-Disposition = %q", got)
 	}
 
@@ -37,13 +39,13 @@ func TestResumeDownload(t *testing.T) {
 	body := rec.Body.String()
 
 	for _, want := range []string{
-		"# " + app.profile.Name + " " + app.profile.NameZh,
-		app.profile.Address,
-		"[" + app.profile.Email + "](mailto:" + app.profile.Email + ")",
-		app.profile.WorkStatus,
-		"[LinkedIn](" + app.profile.LinkedIn + ")",
-		"[GitHub](" + app.profile.GitHub + ")",
-		app.profile.Headline,
+		"# " + profile.Name + " " + profile.NameZh,
+		profile.Address,
+		"[" + profile.Email + "](mailto:" + profile.Email + ")",
+		profile.WorkStatus,
+		"[LinkedIn](" + profile.LinkedIn + ")",
+		"[GitHub](" + profile.GitHub + ")",
+		profile.Headline,
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("resume missing %q", want)

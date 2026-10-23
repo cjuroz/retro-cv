@@ -31,8 +31,8 @@ type PageData struct {
 }
 
 type App struct {
-	pages   map[string]*template.Template
-	profile profile.Profile
+	pages        map[string]*template.Template
+	profileStore *profileStore
 }
 
 func uniqueTechnologies(experiences []profile.Experience) []string {
@@ -88,14 +88,15 @@ func newApp() (*App, error) {
 		pages[name] = tmpl
 	}
 
-	profile, err := loadProfile("data/profile.json")
-	if err != nil {
-		return nil, err
+	store := &profileStore{}
+
+	if err := store.Reload("data/profile.json"); err != nil {
+		return nil, fmt.Errorf("load initial profile: %w", err)
 	}
 
 	return &App{
-		pages:   pages,
-		profile: profile,
+		pages:        pages,
+		profileStore: store,
 	}, nil
 }
 
@@ -112,7 +113,7 @@ func (a *App) renderPage(
 
 	data := PageData{
 		Title:   title,
-		Profile: a.profile,
+		Profile: a.profileStore.Snapshot(),
 		Version: version,
 		Commit:  commit,
 	}
@@ -164,12 +165,12 @@ func (a *App) routes() *http.ServeMux {
 	))
 
 	mux.HandleFunc("GET /my-resume", func(w http.ResponseWriter, r *http.Request) {
-		resume := generateResumeMarkdown(a.profile)
+		resume := generateResumeMarkdown(a.profileStore.Snapshot())
 
 		w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
 		w.Header().Set(
 			"Content-Disposition",
-			`attachment; filename="`+strings.ToLower(strings.ReplaceAll(a.profile.Name, " ", "-"))+`-resume.md"`)
+			`attachment; filename="`+strings.ToLower(strings.ReplaceAll(a.profileStore.Snapshot().Name, " ", "-"))+`-resume.md"`)
 		w.Header().Set("Cache-Control", "no-cache")
 
 		w.WriteHeader(http.StatusOK)
@@ -212,13 +213,33 @@ func requestLogger(next http.Handler) http.Handler {
 func main() {
 	app, err := newApp()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("initialize application: %v", err)
+		return
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
+
+	// Application lifecycle: stop on SIGINT or SIGTERM.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	watchCtx, stopWatcher := context.WithCancel(ctx)
+
+	watcherDone, err := watchProfile(watchCtx, "data/profile.json", app.profileStore)
+	if err != nil {
+		stopWatcher()
+		log.Printf("start profile watcher: %v", err)
+		return
+	}
+
+	// Stop and join the watcher before main exits.
+	defer func() {
+		stopWatcher()
+		<-watcherDone
+	}()
 
 	handler := securityHeaders(requestLogger(app.routes()))
 
@@ -228,9 +249,6 @@ func main() {
 		ReadHeaderTimeout: 5 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 
 	serverErrors := make(chan error, 1)
 
@@ -242,7 +260,7 @@ func main() {
 	select {
 	case err := <-serverErrors:
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("starting server: %v", err)
+			log.Printf("HTTP server failed: %v", err)
 		}
 
 	case <-ctx.Done():

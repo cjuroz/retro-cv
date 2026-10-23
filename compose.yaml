@@ -1,8 +1,8 @@
 services:
-  retro-cv:
+  web:
     build:
       context: .
-    image: retro-cv:local
+    image: ghcr.io/cjuroz/retro-cv:${IMAGE_TAG:-local}
     container_name: retro-cv
     ports:
       - "127.0.0.1:8080:8080"

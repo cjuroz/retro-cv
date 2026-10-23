@@ -46,11 +46,11 @@ func TestExperienceJSON(t *testing.T) {
 	}
 
 	if len(got.Tasks) != 2 {
-		t.Fatalf("len(Description) = %d, want 2", len(got.Tasks))
+		t.Fatalf("len(Tasks) = %d, want 2", len(got.Tasks))
 	}
-	for i, description := range got.Tasks {
-		if strings.TrimSpace(description) == "" {
-			t.Errorf("Description[%d] should not be empty", i)
+	for i, task := range got.Tasks {
+		if strings.TrimSpace(task) == "" {
+			t.Errorf("Task[%d] should not be empty", i)
 		}
 	}
 
@@ -66,7 +66,7 @@ func TestExperienceWebsiteOptional(t *testing.T) {
 		"location": "Taipei, Taiwan",
 		"role": "Software Engineer",
 		"period": "2020 - 2024",
-		"description": ["Built backend services."],
+		"Tasks": ["Built backend services."],
 		"technologies": ["Go"]
 	}`
 

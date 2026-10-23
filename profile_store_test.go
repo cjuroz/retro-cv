@@ -97,12 +97,12 @@ func TestWatchProfileReloadsChangedFile(t *testing.T) {
 		t.Fatalf("watchProfile() error = %v", err)
 	}
 
-	writeTestProfile(t, path, "Updated headline")
-
-	waitForHeadline(t, store, "Updated headline")
-
 	t.Cleanup(func() {
 		cancel()
 		<-done
 	})
+
+	writeTestProfile(t, path, "Updated headline")
+
+	waitForHeadline(t, store, "Updated headline")
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -82,4 +84,23 @@ func watchProfile(ctx context.Context, path string, store *profileStore) (<-chan
 	}()
 
 	return done, nil
+}
+
+func loadProfile(path string) (profile.Profile, error) {
+	var profile profile.Profile
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return profile, err
+	}
+
+	if err := json.Unmarshal(data, &profile); err != nil {
+		return profile, err
+	}
+
+	if profile.Name == "" {
+		return profile, fmt.Errorf("profile name is required")
+	}
+
+	return profile, nil
 }

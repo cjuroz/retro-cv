@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -11,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -22,18 +19,6 @@ var (
 	version = "dev"
 	commit  = "unknown"
 )
-
-type PageData struct {
-	Title   string
-	Profile profile.Profile
-	Version string
-	Commit  string
-}
-
-type App struct {
-	pages        map[string]*template.Template
-	profileStore *profileStore
-}
 
 func uniqueTechnologies(experiences []profile.Experience) []string {
 	seen := make(map[string]struct{})
@@ -50,25 +35,6 @@ func uniqueTechnologies(experiences []profile.Experience) []string {
 	}
 
 	return technologies
-}
-
-func loadProfile(path string) (profile.Profile, error) {
-	var profile profile.Profile
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return profile, err
-	}
-
-	if err := json.Unmarshal(data, &profile); err != nil {
-		return profile, err
-	}
-
-	if profile.Name == "" {
-		return profile, fmt.Errorf("profile name is required")
-	}
-
-	return profile, nil
 }
 
 func newApp() (*App, error) {
@@ -98,116 +64,6 @@ func newApp() (*App, error) {
 		pages:        pages,
 		profileStore: store,
 	}, nil
-}
-
-func (a *App) renderPage(
-	w http.ResponseWriter,
-	name string,
-	title string,
-) {
-	tmpl, ok := a.pages[name]
-	if !ok {
-		http.NotFound(w, nil)
-		return
-	}
-
-	data := PageData{
-		Title:   title,
-		Profile: a.profileStore.Snapshot(),
-		Version: version,
-		Commit:  commit,
-	}
-
-	// Render completely before sending the response.
-	var buf bytes.Buffer
-	if err := tmpl.ExecuteTemplate(&buf, "layout.html", data); err != nil {
-		log.Printf("render %s page: %v", name, err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-
-	if _, err := buf.WriteTo(w); err != nil {
-		log.Printf("write %s response: %v", name, err)
-	}
-}
-
-func (a *App) routes() *http.ServeMux {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ok\n"))
-	})
-
-	mux.HandleFunc("GET /ready", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("ready\n"))
-	})
-
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "home", "Home")
-	})
-
-	mux.HandleFunc("GET /about", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "about", "About")
-	})
-
-	mux.HandleFunc("GET /experience", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "experience", "Experience")
-	})
-
-	mux.Handle("GET /static/", http.StripPrefix(
-		"/static/",
-		http.FileServer(http.Dir("static")),
-	))
-
-	mux.HandleFunc("GET /my-resume", func(w http.ResponseWriter, r *http.Request) {
-		resume := generateResumeMarkdown(a.profileStore.Snapshot())
-
-		w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
-		w.Header().Set(
-			"Content-Disposition",
-			`attachment; filename="`+strings.ToLower(strings.ReplaceAll(a.profileStore.Snapshot().Name, " ", "-"))+`-resume.md"`)
-		w.Header().Set("Cache-Control", "no-cache")
-
-		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte(resume)); err != nil {
-			log.Printf("write resume response: %v", err)
-		}
-	})
-
-	return mux
-}
-
-func securityHeaders(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("X-Content-Type-Options", "nosniff")
-		w.Header().Set("X-Frame-Options", "DENY")
-		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
-		w.Header().Set(
-			"Content-Security-Policy",
-			"default-src 'self'; style-src 'self'; img-src 'self' data:; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
-		)
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func requestLogger(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		next.ServeHTTP(w, r)
-
-		log.Printf(
-			"method=%s path=%s duration=%s",
-			r.Method,
-			r.URL.Path,
-			time.Since(start),
-		)
-	})
 }
 
 func main() {

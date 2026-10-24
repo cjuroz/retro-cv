@@ -7,16 +7,43 @@ import (
 	"strings"
 )
 
-func (a *App) renderPage(w http.ResponseWriter, name string, title string) {
+func (a *App) renderPage(w http.ResponseWriter, r *http.Request, name string, title string) {
 	tmpl, ok := a.pages[name]
 	if !ok {
 		http.NotFound(w, nil)
 		return
 	}
 
+	p := a.profileStore.Snapshot()
+
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+
+	// Fallback check for proxies/load balancers (optional but good practice)
+	if proto := r.Header.Get("X-Forwarded-Proto"); proto != "" {
+		scheme = proto
+	}
+
+	seo := SEOData{
+		Description: "Cloud and software engineering leader with 12+ years in AWS, SRE, DevOps and distributed systems.",
+		Canonical:   scheme + "://" + r.Host,
+		OGTitle:     title + " | " + p.Name,
+		OGImage:     scheme + "://" + r.Host + "/static/img/og-image.png",
+	}
+
+	switch name {
+	case "about":
+		seo.Description = "Engineering leadership, cloud architecture, production reliability and backend engineering experience."
+	case "experience":
+		seo.Description = "Professional experience spanning cloud infrastructure, enterprise security SaaS, fintech and software architecture."
+	}
+
 	data := PageData{
 		Title:   title,
-		Profile: a.profileStore.Snapshot(),
+		SEO:     seo,
+		Profile: p,
 		Version: version,
 		Commit:  commit,
 	}

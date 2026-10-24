@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0a0d0b">
-    <title>{{ .Title }} | Cristian Uroz</title>
+    <title>{{ .Title }} | {{ .Profile.Name }}</title>
+    <meta name="description" content="{{ .SEO.Description }}">
+    <link rel="canonical" href="{{ .SEO.Canonical }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ .Profile.Name }}">
+    <meta property="og:title" content="{{ .SEO.OGTitle }}">
+    <meta property="og:description" content="{{ .SEO.Description }}">
+    <meta property="og:url" content="{{ .SEO.Canonical }}">
+    <meta property="og:image" content="{{ .SEO.OGImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ .Profile.Name }} — Cloud and Software Engineering Leader">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ .SEO.OGTitle }}">
+    <meta name="twitter:description" content="{{ .SEO.Description }}">
+    <meta name="twitter:image" content="{{ .SEO.OGImage }}">
+
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>

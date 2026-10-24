@@ -13,7 +13,15 @@ type App struct {
 
 type PageData struct {
 	Title   string
+	SEO     SEOData
 	Profile profile.Profile
 	Version string
 	Commit  string
+}
+
+type SEOData struct {
+	Description string
+	Canonical   string
+	OGTitle     string
+	OGImage     string
 }

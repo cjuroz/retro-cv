@@ -18,15 +18,15 @@ func (a *App) routes() *http.ServeMux {
 	})
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "home", "Home")
+		a.renderPage(w, r, "home", "Home")
 	})
 
 	mux.HandleFunc("GET /about", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "about", "About")
+		a.renderPage(w, r, "about", "About")
 	})
 
 	mux.HandleFunc("GET /experience", func(w http.ResponseWriter, r *http.Request) {
-		a.renderPage(w, "experience", "Experience")
+		a.renderPage(w, r, "experience", "Experience")
 	})
 
 	mux.Handle("GET /static/", http.StripPrefix(

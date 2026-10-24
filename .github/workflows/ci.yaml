@@ -45,10 +45,16 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Read application version
+      - name: Calculate application version
         id: version
-        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          VERSION=$(git describe --tags --always)
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Application version: ${VERSION}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

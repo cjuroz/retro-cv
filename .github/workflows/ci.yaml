@@ -3,6 +3,8 @@ name: retro-cv
 on:
   push:
     branches: [master]
+    tags:
+      - "v*"
   pull_request:
     branches: [master]
 
@@ -36,7 +38,7 @@ jobs:
   publish:
     name: Publish Docker image
     needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -93,7 +95,7 @@ jobs:
   deploy:
     name: Deploy to EC2
     needs: publish
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:

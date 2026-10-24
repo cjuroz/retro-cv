@@ -19,7 +19,7 @@ func generateResumeMarkdown(p profile.Profile) string {
 	fmt.Fprintf(&b, "**ONLINE RESUME (GO RETRO-WEBSITE) ->** <%s>\n\n", p.ResumeURL)
 	fmt.Fprintf(&b, "%s | [%s](mailto:%s)  \n", p.Address, p.Email, p.Email)
 	fmt.Fprintf(&b, "Work Status: %s  \n", p.WorkStatus)
-	fmt.Fprintf(&b, "[LinkedIn](%s) | [GitHub](%s)\n\n", p.LinkedIn, p.GitHub)
+	fmt.Fprintf(&b, "[LinkedIn](%s) | [GitHub](%s)\n\n", p.Socials.LinkedIn, p.Socials.GitHub)
 
 	b.WriteString("## PROFESSIONAL SUMMARY\n\n")
 	fmt.Fprintf(&b, "### %s\n\n", p.Headline)
@@ -38,7 +38,7 @@ func generateResumeMarkdown(p profile.Profile) string {
 	b.WriteString("\n")
 
 	b.WriteString("## WORK EXPERIENCE\n\n")
-	for _, exp := range p.Experiences {
+	for _, exp := range p.Experience {
 		fmt.Fprintf(&b, "### %s @ %s | %s %s", exp.Role, exp.Company, exp.Location, exp.Period)
 
 		if exp.Website != "" {
@@ -62,7 +62,7 @@ func generateResumeMarkdown(p profile.Profile) string {
 	}
 
 	b.WriteString("## EDUCATION & LANGUAGES\n\n")
-	for _, edu := range p.Educations {
+	for _, edu := range p.Education {
 		fmt.Fprintf(&b, "**%s** %s  \n %s\n\n", edu.Degree, edu.Period, edu.Institution)
 	}
 

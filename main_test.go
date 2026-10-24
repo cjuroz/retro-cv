@@ -89,11 +89,11 @@ func TestLoadProfile(t *testing.T) {
 		t.Error("profile headline should not be empty")
 	}
 
-	if len(got.Experiences) == 0 {
+	if len(got.Experience) == 0 {
 		t.Fatal("expected at least one experience entry")
 	}
 
-	for i, exp := range got.Experiences {
+	for i, exp := range got.Experience {
 		if strings.TrimSpace(exp.Company) == "" {
 			t.Errorf("experience[%d]: company should not be empty", i)
 		}

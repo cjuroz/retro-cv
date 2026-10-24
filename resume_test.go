@@ -43,8 +43,8 @@ func TestResumeDownload(t *testing.T) {
 		profile.Address,
 		"[" + profile.Email + "](mailto:" + profile.Email + ")",
 		profile.WorkStatus,
-		"[LinkedIn](" + profile.LinkedIn + ")",
-		"[GitHub](" + profile.GitHub + ")",
+		"[LinkedIn](" + profile.Socials.LinkedIn + ")",
+		"[GitHub](" + profile.Socials.GitHub + ")",
 		profile.Headline,
 	} {
 		if !strings.Contains(body, want) {

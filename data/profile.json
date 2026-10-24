@@ -5,10 +5,12 @@
   "address": "Xinzhuang Dist., New Taipei City, Taiwan",
   "email": "cristian@uroz.cat",
   "work_status": "Taiwan APRC Holder (Open Work Permit / No Sponsorship Required)",
-  "linkedin": "https://linkedin.com/in/cristianuroz",
-  "github": "https://github.com/cjuroz",
   "headline": "CLOUD & SOFTWARE ENGINEERING LEADER | SRE | DEVOPS | BACKEND ARCHITECT",
   "summary": "Results-driven engineer with 12+ years of experience across enterprise security SaaS, distributed backend architecture, and cloud infrastructure operations. Experienced in leading SRE/DevOps teams, designing highly available multi-region AWS architectures, and building robust API-driven backends in Java, C#, Python, and Go. Entrepreneurial leader focused on connecting technical excellence with business outcomes.",
+  "socials": {
+      "linkedin": "https://linkedin.com/in/cristianuroz",
+      "github": "https://github.com/cjuroz"
+  },
   "skills": [
     "Languages & Scripting: Java, C#, C/C++, Bash/Shell, Python, Go",
     "Cloud & Infrastructure: AWS (Solutions Architect Certified), Docker, Microservices",
@@ -23,7 +25,7 @@
     "SRE, DevOps, CI/CD, and production reliability",
     "Technical leadership and cross-team collaboration"
   ],
-  "educations": [
+  "education": [
     {
       "institution": "Polytechnic University of Catalonia – BarcelonaTech, Spain",
       "degree": "M.Sc. in Computer Science",
@@ -48,7 +50,7 @@
       "level": "Intermediate proficiency"
     }
   ],
-  "experiences": [
+  "experience": [
     {
       "company": "HolaTaipei Co., Ltd. (台北歡迎有限公司)",
       "summary": "HolaTaipei is a travel agency project founded by Spaniards living in Taiwan and targeting, but not limited to, Spanish speaking customers wishing to come to Taiwan for travel and/or business.",

@@ -36,6 +36,21 @@
             <a href="/experience">EXPERIENCE</a>
         </nav>
 
+        <div class="social-links" aria-label="Social profiles">
+            {{ if .Profile.Socials.LinkedIn }}
+            <a href="{{ .Profile.Socials.LinkedIn }}"
+               target="_blank"
+               rel="noopener noreferrer">LINKEDIN ↗</a>
+            {{ end }}
+
+            {{ if .Profile.Socials.GitHub }}
+            <a href="{{ .Profile.Socials.GitHub }}"
+               target="_blank"
+               rel="noopener noreferrer">GITHUB ↗</a>
+            {{ end }}
+            <a href="/my-resume" class="nav-resume">DOWNLOAD RESUME ↓</a>
+        </div>
+
         <div id="system-status" class="system-status is-loading">
             <span class="status-dot"></span>
             <span class="status-text">SYSTEM LOADING...</span>

@@ -40,13 +40,13 @@
     <p class="output">[04] Built backend systems for NFC wallets and mobile payments</p>
 
     <p><span class="prompt">$</span> cat career.log</p>
-    {{ range .Profile.Experiences }}
+    {{ range .Profile.Experience }}
     <p class="output">{{ .Period }} {{ .Company }} // {{ .Role }}</p>
     {{ end }}
 
     <p><span class="prompt">$</span> ls tech-stack/</p>
     <div class="tags">
-        {{ range uniqueTechnologies .Profile.Experiences }}
+        {{ range uniqueTechnologies .Profile.Experience }}
         <span class="tag">{{ . }}</span>
         {{ end }}
     </div>

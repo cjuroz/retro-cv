@@ -96,7 +96,7 @@ func (a *App) handleResumePDF(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pdf, err := generateResumePDF(md)
+	pdf, err := a.cachedResumePDF(md)
 	if err != nil {
 		log.Printf("generate resume PDF: %v", err)
 		http.Error(w, "Could not generate resume PDF", http.StatusInternalServerError)

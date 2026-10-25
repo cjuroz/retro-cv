@@ -1,0 +1,47 @@
+# {{.Name}} {{.NameZh}}
+
+**ONLINE RESUME (GO RETRO-WEBSITE) ->** {{.ResumeURL}}
+
+{{.Address}} | [{{.Email}}](mailto:{{.Email}})  
+Work Status: {{.WorkStatus}}  
+[LinkedIn]({{.Socials.LinkedIn}}) | [GitHub]({{.Socials.GitHub}})
+
+## PROFESSIONAL SUMMARY
+
+### {{.Headline}}
+{{.Summary}}
+
+## CORE EXPERTISE
+
+{{range .Expertises}}
+- {{.}}
+{{end}}
+
+## TECHNICAL SKILLS
+
+{{range .Skills}}
+- {{.}}
+{{end}}
+
+## WORK EXPERIENCE
+
+{{range .Experience}}
+### {{.Role}} @ {{.Company}} | {{.Location}} {{.Period}} {{if .Website}}| {{.Website}}{{end}}
+
+{{.Summary}}
+
+{{range .Tasks}}
+- {{.}}
+{{end}}
+
+{{if .Technologies}}**Technologies:** {{range $i, $tech := .Technologies}}{{if $i}}, {{end}}{{$tech}}{{end}}{{end}}{{end}}
+
+## EDUCATION & LANGUAGES
+
+{{range .Education}}
+**{{.Degree}}** {{.Period}}  
+{{.Institution}}
+
+{{end}}
+
+{{range $i, $lang := .Languages}}{{if $i}} | {{end}}**{{$lang.Language}}:** {{$lang.Level}}{{end}}

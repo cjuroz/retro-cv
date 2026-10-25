@@ -64,12 +64,13 @@ func (a *App) renderPage(w http.ResponseWriter, r *http.Request, name string, ti
 	}
 }
 
-func (a *App) handleResume(w http.ResponseWriter, r *http.Request) {
+func (a *App) handleResumeMarkdown(w http.ResponseWriter, r *http.Request) {
 	p := a.profileStore.Snapshot()
-	resume, err := generateResumeMarkdown(p)
+
+	md, err := generateResumeMarkdown(p)
 	if err != nil {
-		log.Printf("generate resume: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("generate resume markdown: %v", err)
+		http.Error(w, "Could not generate resume markdown", http.StatusInternalServerError)
 		return
 	}
 
@@ -78,10 +79,38 @@ func (a *App) handleResume(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`-resume.md"`)
 	w.Header().Set("Cache-Control", "no-cache")
-
 	w.WriteHeader(http.StatusOK)
 
-	if _, err := w.Write([]byte(resume)); err != nil {
+	if _, err := w.Write([]byte(md)); err != nil {
 		log.Printf("write resume response: %v", err)
+	}
+}
+
+func (a *App) handleResumePDF(w http.ResponseWriter, r *http.Request) {
+	p := a.profileStore.Snapshot()
+
+	md, err := generateResumeMarkdown(p)
+	if err != nil {
+		log.Printf("generate resume markdown: %v", err)
+		http.Error(w, "Could not generate resume markdown", http.StatusInternalServerError)
+		return
+	}
+
+	pdf, err := generateResumePDF(md)
+	if err != nil {
+		log.Printf("generate resume PDF: %v", err)
+		http.Error(w, "Could not generate resume PDF", http.StatusInternalServerError)
+		return
+	}
+
+	filename := strings.ToLower(strings.ReplaceAll(p.Name, " ", "-"))
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`-resume.pdf"`)
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(http.StatusOK)
+
+	if _, err := w.Write(pdf); err != nil {
+		log.Printf("write resume PDF response: %v", err)
 	}
 }

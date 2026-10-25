@@ -34,7 +34,8 @@ func (a *App) routes() *http.ServeMux {
 		http.FileServer(http.Dir("static")),
 	))
 
-	mux.HandleFunc("GET /my-resume", a.handleResume)
+	mux.HandleFunc("GET /my-resume", a.handleResumeMarkdown)
+	mux.HandleFunc("GET /my-resume-pdf", a.handleResumePDF)
 
 	return mux
 }

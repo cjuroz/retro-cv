@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 # Stage 2: Run the application.
 FROM alpine:3.22
 
-RUN apk add --no-cache ca-certificates curl \
+RUN apk add --no-cache ca-certificates curl chromium font-noto font-noto-cjk \
     && addgroup -S -g 1001 app \
     && adduser -S -u 1001 -G app app
 

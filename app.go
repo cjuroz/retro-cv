@@ -9,6 +9,7 @@ import (
 type App struct {
 	pages        map[string]*template.Template
 	profileStore *profileStore
+	pdfCache     resumePDFCache
 }
 
 type PageData struct {

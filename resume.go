@@ -3,18 +3,51 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"html/template"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	textTmpl "text/template"
 	"time"
 
 	"github.com/cjuroz/retro-cv/internal/profile"
 	"github.com/yuin/goldmark"
 )
+
+type resumePDFCache struct {
+	mu    sync.Mutex
+	key   [32]byte
+	pdf   []byte
+	valid bool
+}
+
+func (a *App) cachedResumePDF(markdown string) ([]byte, error) {
+	key := sha256.Sum256([]byte(markdown))
+
+	a.pdfCache.mu.Lock()
+	defer a.pdfCache.mu.Unlock()
+
+	// Return the cached PDF if the resume hasn't changed.
+	if a.pdfCache.valid && a.pdfCache.key == key {
+		return a.pdfCache.pdf, nil
+	}
+
+	// Generate a new PDF only when the content changes.
+	pdf, err := generateResumePDF(markdown)
+	if err != nil {
+		return nil, err
+	}
+
+	a.pdfCache.key = key
+	a.pdfCache.pdf = pdf
+	a.pdfCache.valid = true
+
+	return pdf, nil
+}
 
 func generateResumeMarkdown(p profile.Profile) (string, error) {
 	tmpl, err := textTmpl.ParseFiles("templates/resume.md.tmpl")

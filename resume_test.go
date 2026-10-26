@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/cjuroz/retro-cv/internal/profile"
 )
 
 func TestResumeDownload(t *testing.T) {
@@ -50,5 +53,47 @@ func TestResumeDownload(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Errorf("resume missing %q", want)
 		}
+	}
+}
+
+func TestRenderResumePDF(t *testing.T) {
+	p := profile.Profile{
+		Name:       "Example Name",
+		ResumeURL:  "https://example.com/resume",
+		Address:    "Taipei, Taiwan",
+		Email:      "person@example.com",
+		WorkStatus: "Open to opportunities",
+		Headline:   "Engineering leader",
+		Summary:    "Experienced engineering leader.",
+		Socials: profile.Socials{
+			LinkedIn: "https://example.com/linkedin",
+			GitHub:   "https://example.com/github",
+		},
+		Expertises: []string{"Cloud architecture"},
+		Skills:     []string{"Go", "AWS"},
+		Experience: []profile.Experience{{
+			Company:      "Example Corp",
+			Summary:      "Built reliable systems.",
+			Website:      "https://example.com",
+			Location:     "Taipei",
+			Role:         "Engineering Lead",
+			Period:       "2020 - Present",
+			Tasks:        []string{"Led a platform team."},
+			Technologies: []string{"Go", "AWS"},
+		}},
+		Education: []profile.Education{{
+			Institution: "Example University",
+			Degree:      "BSc Computer Science",
+			Period:      "2010 - 2014",
+		}},
+		Languages: []profile.Language{{Language: "English", Level: "Fluent"}},
+	}
+
+	pdf, err := generateResumePDF(p)
+	if err != nil {
+		t.Fatalf("renderResumePDF() error = %v", err)
+	}
+	if !bytes.HasPrefix(pdf, []byte("%PDF-")) {
+		t.Fatal("renderResumePDF() did not return a PDF document")
 	}
 }

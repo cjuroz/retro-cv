@@ -8,9 +8,11 @@ import (
 	"os"
 	"sync"
 	"text/template"
+	"unicode"
 
 	"github.com/cjuroz/retro-cv/internal/profile"
 	"github.com/gpdf-dev/gpdf/document"
+	"github.com/gpdf-dev/gpdf/pdf"
 	pdftemplate "github.com/gpdf-dev/gpdf/template"
 )
 
@@ -63,7 +65,11 @@ func generateResumeMarkdown(p profile.Profile) (string, error) {
 }
 
 func generateResumePDF(p profile.Profile) ([]byte, error) {
-	cjkFont, err := os.ReadFile("fonts/NotoSans-Regular.ttf")
+	latinFont, err := os.ReadFile("fonts/NotoSans-Regular.ttf")
+	if err != nil {
+		return nil, fmt.Errorf("read Noto Sans font: %w", err)
+	}
+	cjkFont, err := os.ReadFile("fonts/NotoSansTC-Regular.ttf")
 	if err != nil {
 		return nil, fmt.Errorf("read Noto Sans TC font: %w", err)
 	}
@@ -71,15 +77,30 @@ func generateResumePDF(p profile.Profile) ([]byte, error) {
 	doc := pdftemplate.New(
 		pdftemplate.WithPageSize(document.A4),
 		pdftemplate.WithMargins(document.UniformEdges(document.Mm(17))),
+		pdftemplate.WithFont("NotoSans", latinFont),
 		pdftemplate.WithFont("NotoSansTC", cjkFont),
-		pdftemplate.WithDefaultFont("NotoSansTC", 10),
+		pdftemplate.WithDefaultFont("NotoSans", 10),
 	)
 
 	page := doc.AddPage()
 	addTextRow := func(text string, options ...pdftemplate.TextOption) {
 		page.AutoRow(func(r *pdftemplate.RowBuilder) {
 			r.Col(12, func(c *pdftemplate.ColBuilder) {
+				if containsHan(text) {
+					options = append(options, pdftemplate.FontFamily("NotoSansTC"))
+				}
 				c.Text(text, options...)
+				c.Spacer(document.Mm(1.5))
+			})
+		})
+	}
+	addHeadingRow := func(text string, options ...pdftemplate.TextOption) {
+		addTextRow(text, options...)
+		page.AutoRow(func(r *pdftemplate.RowBuilder) {
+			r.Col(12, func(c *pdftemplate.ColBuilder) {
+				c.Spacer(document.Mm(2))
+				c.Line()
+				c.Spacer(document.Mm(4))
 			})
 		})
 	}
@@ -87,18 +108,23 @@ func generateResumePDF(p profile.Profile) ([]byte, error) {
 		page.AutoRow(func(r *pdftemplate.RowBuilder) {
 			r.Col(12, func(c *pdftemplate.ColBuilder) {
 				c.RichText(build, options...)
+				c.Spacer(document.Mm(1.5))
 			})
 		})
 	}
-	addListRow := func(items []string) {
-		if len(items) == 0 {
-			return
+	addSpan := func(rt *pdftemplate.RichTextBuilder, text string, options ...pdftemplate.TextOption) {
+		if containsHan(text) {
+			options = append(options, pdftemplate.FontFamily("NotoSansTC"))
 		}
-		page.AutoRow(func(r *pdftemplate.RowBuilder) {
-			r.Col(12, func(c *pdftemplate.ColBuilder) {
-				c.List(items)
-			})
-		})
+		rt.Span(text, options...)
+	}
+	addListRow := func(items []string) {
+		for _, item := range items {
+			item := item
+			addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
+				addSpan(rt, "•    "+item)
+			}, pdftemplate.FontSize(10), pdftemplate.TextIndent(document.Mm(6)))
+		}
 	}
 	addSpacer := func(height float64) {
 		page.AutoRow(func(r *pdftemplate.RowBuilder) {
@@ -108,69 +134,81 @@ func generateResumePDF(p profile.Profile) ([]byte, error) {
 		})
 	}
 
-	addTextRow(p.Name+" "+p.NameZh, pdftemplate.FontSize(25), pdftemplate.Bold())
+	addHeadingRow(p.Name+" "+p.NameZh, pdftemplate.FontSize(25), pdftemplate.Bold())
 	addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
-		rt.Span("ONLINE RESUME (GO RETRO-WEBSITE) -> ", pdftemplate.Bold())
-		rt.Span(p.ResumeURL)
+		addSpan(rt, "ONLINE RESUME (GO RETRO-WEBSITE) -> ", pdftemplate.Bold())
+		addSpan(rt, p.ResumeURL, pdftemplate.TextColor(pdf.Blue))
 	}, pdftemplate.FontSize(9))
+	addSpacer(4)
+
 	addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
-		rt.Span(p.Address + " | " + p.Email)
+		addSpan(rt, p.Address+" | ")
+		addSpan(rt, p.Email, pdftemplate.TextColor(pdf.Blue))
 	}, pdftemplate.FontSize(9))
 	addTextRow("Work Status: "+p.WorkStatus, pdftemplate.FontSize(9))
 	addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
-		rt.Span("LinkedIn: " + p.Socials.LinkedIn + " | GitHub: " + p.Socials.GitHub)
+		addSpan(rt, "LinkedIn: ")
+		addSpan(rt, p.Socials.LinkedIn, pdftemplate.TextColor(pdf.Blue))
+		addSpan(rt, " | GitHub: ")
+		addSpan(rt, p.Socials.GitHub, pdftemplate.TextColor(pdf.Blue))
 	}, pdftemplate.FontSize(9))
+	addSpacer(6)
+
+	addHeadingRow("PROFESSIONAL SUMMARY", pdftemplate.FontSize(16), pdftemplate.Bold())
+	addTextRow(p.Headline, pdftemplate.FontSize(12), pdftemplate.Bold())
+	addSpacer(2)
+	addTextRow(p.Summary, pdftemplate.FontSize(10))
+	addSpacer(6)
+
+	addHeadingRow("CORE EXPERTISE", pdftemplate.FontSize(16), pdftemplate.Bold())
+	addListRow(p.Expertises)
 	addSpacer(5)
 
-	addTextRow("PROFESSIONAL SUMMARY", pdftemplate.FontSize(16), pdftemplate.Bold())
-	addTextRow(p.Headline, pdftemplate.FontSize(12), pdftemplate.Bold())
-	addTextRow(p.Summary, pdftemplate.FontSize(10))
-	addSpacer(4)
-
-	addTextRow("CORE EXPERTISE", pdftemplate.FontSize(16), pdftemplate.Bold())
-	addListRow(p.Expertises)
-	addSpacer(3)
-
-	addTextRow("TECHNICAL SKILLS", pdftemplate.FontSize(16), pdftemplate.Bold())
+	addHeadingRow("TECHNICAL SKILLS", pdftemplate.FontSize(16), pdftemplate.Bold())
 	addListRow(p.Skills)
-	addSpacer(3)
+	addSpacer(5)
 
-	addTextRow("WORK EXPERIENCE", pdftemplate.FontSize(16), pdftemplate.Bold())
+	addHeadingRow("WORK EXPERIENCE", pdftemplate.FontSize(16), pdftemplate.Bold())
 
 	for _, exp := range p.Experience {
-		heading := exp.Role + " @ " + exp.Company + " | " + exp.Location + " " + exp.Period
-		if exp.Website != "" {
-			heading += " | " + exp.Website
-		}
-		addTextRow(heading, pdftemplate.FontSize(12), pdftemplate.Bold())
+		addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
+			addSpan(rt, exp.Role+" @ "+exp.Company+" | "+exp.Location+" "+exp.Period, pdftemplate.Bold())
+			if exp.Website != "" {
+				addSpan(rt, " | ")
+				addSpan(rt, exp.Website, pdftemplate.Bold(), pdftemplate.TextColor(pdf.Blue))
+			}
+		}, pdftemplate.FontSize(12))
+		addSpacer(4)
 		addTextRow(exp.Summary, pdftemplate.FontSize(10))
+		addSpacer(4)
 		addListRow(exp.Tasks)
+		addSpacer(4)
 		if len(exp.Technologies) > 0 {
 			addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
-				rt.Span("Technologies: ", pdftemplate.Bold())
-				rt.Span(joinTechnologies(exp.Technologies))
+				addSpan(rt, "Technologies: ", pdftemplate.Bold())
+				addSpan(rt, joinTechnologies(exp.Technologies))
 			}, pdftemplate.FontSize(9))
 		}
-		addSpacer(4)
+		addSpacer(6)
 	}
 
-	addTextRow("EDUCATION & LANGUAGES", pdftemplate.FontSize(16), pdftemplate.Bold())
+	addHeadingRow("EDUCATION & LANGUAGES", pdftemplate.FontSize(16), pdftemplate.Bold())
 	for _, education := range p.Education {
 		addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
-			rt.Span(education.Degree, pdftemplate.Bold())
-			rt.Span(" " + education.Period)
+			addSpan(rt, education.Degree, pdftemplate.Bold())
+			addSpan(rt, " "+education.Period)
 		}, pdftemplate.FontSize(10))
 		addTextRow(education.Institution, pdftemplate.FontSize(10))
-		addSpacer(3)
+		addSpacer(5)
 	}
 	if len(p.Languages) > 0 {
 		addRichTextRow(func(rt *pdftemplate.RichTextBuilder) {
 			for i, language := range p.Languages {
 				if i > 0 {
-					rt.Span(" | ")
+					addSpan(rt, " | ")
 				}
-				rt.Span(language.Language, pdftemplate.Bold())
-				rt.Span(": " + language.Level)
+				addSpan(rt, language.Language, pdftemplate.Bold())
+				addSpan(rt, ": "+language.Level)
 			}
 		}, pdftemplate.FontSize(10))
 	}
@@ -192,4 +230,13 @@ func joinTechnologies(items []string) string {
 		result += item
 	}
 	return result
+}
+
+func containsHan(text string) bool {
+	for _, r := range text {
+		if unicode.Is(unicode.Han, r) {
+			return true
+		}
+	}
+	return false
 }

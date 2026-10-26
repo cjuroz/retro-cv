@@ -1,26 +1,26 @@
 # Retro CV
 
-[![Depoyment](https://github.com/cjuroz/retro-cv/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/cjuroz/retro-cv/actions/workflows/ci.yaml)
-[![Release](https://img.shields.io/github/v/release/cjuroz/retro-cv?display_name=tag&include_prereleases)](https://github.com/cjuroz/retro-cv/releases)
+[![retro-cv](https://github.com/cjuroz/retro-cv/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/cjuroz/retro-cv/actions/workflows/ci.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Go 1.27.1](https://img.shields.io/badge/Go-1.27.1-00ADD8?logo=go&logoColor=white)](https://go.dev/dl/)
 [![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 [![GHCR image](https://img.shields.io/badge/GHCR-ghcr.io%2Fcjuroz%2Fretro--cv-2496ED?logo=docker&logoColor=white)](https://github.com/cjuroz/retro-cv/pkgs/container/retro-cv)
 
-Retro CV is a lightweight Go-based personal resume and portfolio site with a retro terminal aesthetic. It serves a small set of HTML pages, exposes a Markdown export for the resume, and reloads profile content from JSON at runtime so updates can be made without restarting the app.
+Retro CV is a lightweight Go-based personal resume and portfolio site with a retro terminal aesthetic. It serves a small set of HTML pages, provides Markdown and PDF resume downloads, and reloads profile content from JSON at runtime so updates can be made without restarting the app.
 
 ## Features
 
 - Retro-styled resume website with terminal-inspired UI across multiple pages
 - Go HTTP server with HTML templates and static assets
 - Live profile reload from JSON data files
-- Downloadable Markdown resume export
+- Downloadable Markdown and PDF resume exports
 - Health and readiness endpoints for Docker and Kubernetes checks
 - Container-ready build with Docker Compose support
 
 ## Tech stack
 
 - Go 1.27.1+
+- gpdf for PDF generation
 - Standard library HTTP server and templates
 - HTML, CSS, and vanilla JavaScript
 - Docker and Docker Compose
@@ -75,7 +75,8 @@ The application watches this file and reloads valid JSON automatically. Invalid 
 | / | Home page |
 | /about | About page |
 | /experience | Experience page |
-| /my-resume | Download resume as Markdown |
+| /resume.md | Download resume as Markdown |
+| /resume.pdf | Download resume as PDF |
 | /health | Health endpoint |
 | /ready | Readiness endpoint |
 | /static/ | Static CSS/JS assets |
@@ -127,11 +128,14 @@ Then open http://localhost:8080.
 .
 ├── .github/
 │   └── workflows/
-│       └── ci.yaml            # CI/CD workflow for tests and image publishing
+│       └── ci.yaml             # CI/CD workflow for tests and image publishing
 ├── data/
 │   └── profile.json            # Resume content used by the app
+├── fonts/
+│   ├── NotoSans-Regular.ttf    # Default PDF font
+│   └── NotoSansTC-Regular.ttf  # CJK PDF font
 ├── internal/
-│   └── profile/               # Profile model and validation logic
+│   └── profile/                # Profile model and validation logic
 ├── k8s/
 │   ├── deployment.yaml
 │   └── service.yaml            # Kubernetes deployment manifests
@@ -143,7 +147,8 @@ Then open http://localhost:8080.
 │   ├── about.html
 │   ├── experience.html
 │   ├── home.html
-│   └── layout.html
+│   ├── layout.html
+│   └── resume.md.tmpl          # Markdown resume template
 ├── app.go                      # Core app and page model definitions
 ├── compose.yaml                # Docker Compose configuration
 ├── Dockerfile                  # Multi-stage container build
@@ -153,7 +158,7 @@ Then open http://localhost:8080.
 ├── main.go                     # Server startup and lifecycle
 ├── middleware.go               # HTTP middleware
 ├── profile_store.go            # Profile loader and live reload logic
-├── resume.go                   # Markdown resume generation
+├── resume.go                   # Markdown and PDF resume generation
 ├── routes.go                   # Route registration
 ├── main_test.go
 ├── profile_store_test.go

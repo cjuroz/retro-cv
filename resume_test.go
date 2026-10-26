@@ -16,7 +16,7 @@ func TestResumeDownload(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "/my-resume", nil)
+	req := httptest.NewRequest(http.MethodGet, "/resume.md", nil)
 	rec := httptest.NewRecorder()
 
 	app.routes().ServeHTTP(rec, req)

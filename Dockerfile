@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 # Stage 2: Run the application.
 FROM alpine:3.22
 
-RUN apk add --no-cache ca-certificates curl chromium font-noto font-noto-cjk \
+RUN apk add --no-cache ca-certificates curl \
     && addgroup -S -g 1001 app \
     && adduser -S -u 1001 -G app app
 
@@ -29,6 +29,7 @@ WORKDIR /app
 COPY --from=builder --chown=app:app /out/retro-cv ./retro-cv
 COPY --from=builder --chown=app:app /src/templates ./templates
 COPY --from=builder --chown=app:app /src/static ./static
+COPY --from=builder --chown=app:app /src/fonts ./fonts
 COPY --from=builder --chown=app:app /src/data ./data
 
 ENV PORT=8080

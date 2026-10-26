@@ -82,21 +82,14 @@ func (a *App) handleResumeMarkdown(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	if _, err := w.Write([]byte(md)); err != nil {
-		log.Printf("write resume response: %v", err)
+		log.Printf("write resume markdown response: %v", err)
 	}
 }
 
 func (a *App) handleResumePDF(w http.ResponseWriter, r *http.Request) {
 	p := a.profileStore.Snapshot()
 
-	md, err := generateResumeMarkdown(p)
-	if err != nil {
-		log.Printf("generate resume markdown: %v", err)
-		http.Error(w, "Could not generate resume markdown", http.StatusInternalServerError)
-		return
-	}
-
-	pdf, err := a.cachedResumePDF(md)
+	pdf, err := a.cachedResumePDF(p)
 	if err != nil {
 		log.Printf("generate resume PDF: %v", err)
 		http.Error(w, "Could not generate resume PDF", http.StatusInternalServerError)
@@ -108,8 +101,8 @@ func (a *App) handleResumePDF(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`-resume.pdf"`)
 	w.Header().Set("Cache-Control", "no-store")
-	w.WriteHeader(http.StatusOK)
 
+	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(pdf); err != nil {
 		log.Printf("write resume PDF response: %v", err)
 	}
